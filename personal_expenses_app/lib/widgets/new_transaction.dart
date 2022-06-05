@@ -1,20 +1,30 @@
 // ignore_for_file: deprecated_member_use
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class NewTransaction extends StatelessWidget {
-  final Function _addTxCallBack;
-  final titelInputControler = TextEditingController();
-  final amountInputControler = TextEditingController();
-  NewTransaction(this._addTxCallBack);
+class NewTransaction extends StatefulWidget {
+  final Function addTxCallBack;
+
+  NewTransaction(this.addTxCallBack);
+
+  @override
+  State<NewTransaction> createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final titleInputController = TextEditingController();
+
+  final amountInputController = TextEditingController();
 
   void submitdata() {
-    if (amountInputControler.text.isEmpty || amountInputControler.text.isEmpty) {
+    if (titleInputController.text.isEmpty ||
+        amountInputController.text.isEmpty) {
       return;
     }
-    final enteredTitel = titelInputControler.text;
-    final enteredAmount = double.parse(amountInputControler.text);
-    _addTxCallBack(enteredTitel, enteredAmount);
-
+    final enteredTitle = titleInputController.text;
+    final enteredAmount = double.parse(amountInputController.text);
+    widget.addTxCallBack(enteredTitle, enteredAmount);
+    Navigator.of(context).pop();
     //FocusScope.of(context).unfocus();
   }
 
@@ -27,15 +37,15 @@ class NewTransaction extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           TextField(
             decoration: const InputDecoration(label: Text('Title')),
-            controller: titelInputControler,
+            controller: titleInputController,
             onSubmitted: (val) => submitdata(),
           ),
           TextField(
             decoration: const InputDecoration(label: Text('Amount')),
-            controller: amountInputControler,
+            controller: amountInputController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             onSubmitted: (val) => submitdata(),
-            maxLength: 4,
+            maxLength: 24,
           ),
           FlatButton(
             onPressed: () {
