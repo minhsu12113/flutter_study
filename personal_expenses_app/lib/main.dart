@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Personal Expenses',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.blueGrey,
           fontFamily: 'Quicksand',
@@ -36,15 +37,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _userTransaction = [
-    // Transaction(
-    //     id: 't1', title: 'New Shoes', amount: 69.7, dateTime: DateTime.now()),
-    // Transaction(
-    //     id: 't2',
-    //     title: 'Weekly Groceries',
-    //     amount: 99.2,
-    //     dateTime: DateTime.now()),
-  ];
+  final List<Transaction> _userTransaction = [];
 
   List<Transaction> get _recentTransactions {
     return _userTransaction.where((tx) {
@@ -52,12 +45,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction(String title, double amount) {
+  void _addNewTransaction(String title, double amount, DateTime date) {
     final newTx = Transaction(
         id: DateTime.now().toString(),
         title: title,
         amount: amount,
-        date: DateTime.now());
+        date: date);
 
     setState(() {
       _userTransaction.add(newTx);
@@ -67,10 +60,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,
+        isScrollControlled: true,
         builder: (_) {
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
-            child: NewTransaction(_addNewTransaction),
+            child:NewTransaction(_addNewTransaction),
           );
         });
   }
@@ -92,7 +86,11 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SingleChildScrollView(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-           _recentTransactions.isEmpty ? Text('') : Chart(_recentTransactions),
+        _recentTransactions.isEmpty
+            ? const SizedBox(
+                height: 8,
+              )
+            : Chart(_recentTransactions),
         TransactionList(_userTransaction)
       ])),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
